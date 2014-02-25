@@ -1,0 +1,37 @@
+################################
+## Counts of transcripts, etc.
+################################
+Total trinity transcripts:	121863
+Total trinity components:	75516
+Percent GC: 49.37
+
+########################################
+Stats based on ALL transcript contigs:
+########################################
+
+	Contig N10: 6743
+	Contig N20: 5078
+	Contig N30: 4111
+	Contig N40: 3359
+	Contig N50: 2725
+
+	Median contig length: 551
+	Average contig: 1278.87
+	Total assembled bases: 155847137
+
+
+#####################################################
+## Stats based on ONLY LONGEST ISOFORM per COMPONENT:
+#####################################################
+
+	Contig N10: 6727
+	Contig N20: 4998
+	Contig N30: 3957
+	Contig N40: 3147
+	Contig N50: 2418
+
+	Median contig length: 351
+	Average contig: 938.15
+	Total assembled bases: 70845372
+
+
