@@ -34,6 +34,7 @@ parser = argparse.ArgumentParser()  # Initiate argument parser object
 parser.add_argument('-t', '--otutable', help='File containing read counts and taxonomy for each OTU', required=True)
 parser.add_argument('-s', '--otuseq', help='File containing read names for each OTU', required=True)
 parser.add_argument('-q', '--query', help='Search term to use in filtering', required=True)
+parser.add_argument('-w', '--querytype', help='Search in OTU or taxonomy field', required=True, default='taxonomy', choices=['taxonomy', 'otu'])
 parser.add_argument("-f", "--fastafile", help="Sequence read file output from Qiime")
 args = parser.parse_args()  # Call command line parser method
 
@@ -51,7 +52,7 @@ fasta_read = args.fastafile
 otu_seq_write = search_term + '_otus_map.txt'
 seq_count_write = search_term + '_seq_count.txt'
 
-otu_write = 'out_table_' + search_term + '.txt'
+otu_write =  search_term + '_otu_table_' + '.txt'
 
 wotufile  = open(otu_write, "wb")
 otuwriter = csv.writer(wotufile, delimiter='\t')
@@ -59,8 +60,6 @@ otuwriter = csv.writer(wotufile, delimiter='\t')
 wotuseqfile  = open(otu_seq_write, "wb")
 otuseqwriter = csv.writer(wotuseqfile, delimiter='\t')
 
-seqcountfile  = open(seq_count_write, "wb")
-seqcountwriter = csv.writer(seqcountfile, delimiter='\t')
 
 
 otu_dict = {}
@@ -87,11 +86,16 @@ with open(otu_read, 'rb') as f:
         if re.search('#OTU', row[0]):
             otuwriter.writerow(row)
         else:
-            if re.search(search_term, row[-1]):
-                otuwriter.writerow(row)
-                otu_dict[row[0]] = row[-1]
-                otu_count += 1
-                
+            if args.querytype == 'taxonomy':
+                if re.search(search_term, row[-1]):
+                    otuwriter.writerow(row)
+                    otu_dict[row[0]] = row[-1]
+                    otu_count += 1
+            elif args.querytype == 'otu':
+                if re.search(search_term, row[0]):
+                    otuwriter.writerow(row)
+                    otu_dict[row[0]] = row[-1]
+                    otu_count += 1
         
 
 print 'Write matching OTU to file: ' + otu_write
@@ -134,6 +138,9 @@ otu_seqid = set(sequences)
 ########################################################
 
 if args.fastafile:
+    seqcountfile  = open(seq_count_write, "wb")
+    seqcountwriter = csv.writer(seqcountfile, delimiter='\t')
+
     print ""
     print "########################################################"
     print "#"
