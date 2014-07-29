@@ -28,19 +28,19 @@ download_swissprot_db = {
       exec "gzip -d $DB_DIR/Trinotate.20140708.swissprot.sqlite.gz"
 }
 
-download_swissprot_db = {
+download_swissTrEMBL_db = {
       exec "wget --directory-prefix=blast http://downloads.sourceforge.net/project/trinotate/TRINOTATE_RESOURCES/20140708/Trinotate.20140708.swissTrEMBL.sqlite.gz"
       exec "gzip -d $DB_DIR/Trinotate.20140708.swissTrEMBL.sqlite.gz"
 }
 
 download_nt = {
-   for(i in {1..19 ) {
+   for(i in {1..19} ) {
       exec "wget --directory-prefix=blast ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.${i}.tar.gz"
    }
 }
 
 download_nt = {
-   for(i in {1..24 ) {
+   for(i in {1..24} ) {
       exec "wget --directory-prefix=blast ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr.${i}.tar.gz"
    }
 }
@@ -108,63 +108,61 @@ download_ncbiref = segment {
 }
 
 
-prepere_ncbi_ref_protein = {
+prepere_ncbiref_protein = {
 exec "cat $BLAST_DIR/cow_protein.faa $BLAST_DIR/zebrafish_protein.faa $BLAST_DIR/human_protein.faa $BLAST_DIR/mouse_protein.faa $BLAST_DIR/rat_protein.faa $BLAST_DIR/pig_protein.faa $BLAST_DIR/frog_protein.faa > $BLAST_DIR/ncbi_ref_protein.faa"
 exec "makeblastdb -in $BLAST_DIR/ncbi_ref_protein.faa -dbtype prot"
 }
 
-prepere_ncbi_ref_rna = {
+prepere_ncbiref_rna = {
 exec "cat $BLAST_DIR/cow_rna.fna $BLAST_DIR/zebrafish_rna.fna $BLAST_DIR/human_rna.fna $BLAST_DIR/mouse_rna.fna $BLAST_DIR/rat_rna.fna $BLAST_DIR/pig_rna.fna $BLAST_DIR/frog_rna.fna > $BLAST_DIR/ncbi_ref_rna.fna"
 exec "makeblastdb -in $BLAST_DIR/ncbi_ref_rna.fna -dbtype nucl"
 }
 
 
-download_chinesehamster_protein {
-   doc "Download Chinese hamster (Cricetulus griseus) RNA" 
-   exec "wget -O $BLAST_DIR/chinesehamster_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Cricetulus_griseus/protein/protein.fa.gz"
-   exec "gzip -d $BLAST_DIR/chinesehamster_protein.fa.gz"
+download_chinesehamster {
+   doc "Download Chinese hamster (Cricetulus griseus)" 
+   multi "wget -O $BLAST_DIR/chinesehamster_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Cricetulus_griseus/protein/protein.fa.gz",
+         "wget -O $BLAST_DIR/chinesehamster_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Cricetulus_griseus/RNA/rna.fa.gz"
+   multi "gzip -d $BLAST_DIR/chinesehamster_protein.fa.gz", 
+         "gzip -d $BLAST_DIR/chinesehamster_rna.fa.gz"
 }
 
-download_chinesehamster_rna {
-   doc "Download Chinese hamster (Cricetulus griseus) protein" 
-   exec "wget -O $BLAST_DIR/chinesehamster_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Cricetulus_griseus/RNA/rna.fa.gz"
-   exec "gzip -d $BLAST_DIR/chinesehamster_rna.fa.gz"
+download_goldenhamster {
+   doc "Download Golden hamster (Mesocricetus auratus)" 
+   multi "wget -O $BLAST_DIR/goldenhamster_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Mesocricetus_auratus/protein/protein.fa.gz", 
+         "wget -O $BLAST_DIR/goldenhamster_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Mesocricetus_auratus/RNA/rna.fa.gz"
+   multi "gzip -d $BLAST_DIR/goldenhamster_protein.fa.gz",
+         "gzip -d $BLAST_DIR/goldenhamster_rna.fa.gz"
 }
 
-download_goldenhamster_protein {
-   doc "Download Golden hamster (Mesocricetus auratus) RNA" 
-   exec "wget -O $BLAST_DIR/goldenhamster_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Mesocricetus_auratus/protein/protein.fa.gz"
-   exec "gzip -d $BLAST_DIR/goldenhamster_protein.fa.gz"
+download_prairiedeermouse {
+   doc "Download Prairie Deer mouse (Peromyscus maniculatus bairdii)" 
+   multi "wget -O $BLAST_DIR/prairiedeermouse_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Peromyscus_maniculatus_bairdii/protein/protein.fa.gz",
+         "wget -O $BLAST_DIR/prairiedeermouse_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Peromyscus_maniculatus_bairdii/RNA/rna.fa.gz"
+   multi "gzip -d $BLAST_DIR/prairiedeermouse_protein.fa.gz",
+         "gzip -d $BLAST_DIR/prairiedeermouse_rna.fa.gz"
 }
 
-download_goldenhamster_rna {
-   doc "Download Golden hamster (Mesocricetus auratus) protein" 
-   exec "wget -O $BLAST_DIR/goldenhamster_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Mesocricetus_auratus/RNA/rna.fa.gz"
-   exec "gzip -d $BLAST_DIR/goldenhamster_rna.fa.gz"
+download_prairievole {
+   doc "Download Prarie vole (Microtus ochrogaster)" 
+   multi "wget -O $BLAST_DIR/prairievole_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Microtus_ochrogaster/protein/protein.fa.gz", 
+         "wget -O $BLAST_DIR/prairievole_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Microtus_ochrogaster/RNA/rna.fa.gz"
+   multi "gzip -d $BLAST_DIR/prairievole_protein.fa.gz",
+         "gzip -d $BLAST_DIR/prairievole_rna.fa.gz"
 }
 
-download_prairiedeermouse_protein {
-   doc "Download Prairie Deer mouse (Peromyscus maniculatus bairdii) RNA" 
-   exec "wget -O $BLAST_DIR/prairiedeermouse_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Peromyscus_maniculatus_bairdii/protein/protein.fa.gz"
-   exec "gzip -d $BLAST_DIR/prairiedeermouse_protein.fa.gz"
+download_close = segment {
+   download_chinesehamster + download_goldenhamster + download_prairiedeermouse + download_prairievole
 }
 
-download_prairiedeermouse_rna {
-   doc "Download Prairie Deer mouse (Peromyscus maniculatus bairdii) protein" 
-   exec "wget -O $BLAST_DIR/prairiedeermouse_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Peromyscus_maniculatus_bairdii/RNA/rna.fa.gz"
-   exec "gzip -d $BLAST_DIR/prairiedeermouse_rna.fa.gz"
+prepere_extended_protein = {
+exec "cat $BLAST_DIR/ncbi_ref_protein.fna $BLAST_DIR/chinesehamster_protein.fa $BLAST_DIR/goldenhamster_protein.fa $BLAST_DIR/prairiedeermouse_protein.fa $BLAST_DIR/prairievole_protein.fa  > $BLAST_DIR/ncbi_extended_protein.fna
+exec "makeblastdb -in $BLAST_DIR/ncbi_extended_protein.faa -dbtype prot"
 }
 
-download_prairievole_protein {
-   doc "Download Prarie vole  (Microtus ochrogaster) RNA" 
-   exec "wget -O $BLAST_DIR/prairiedeermouse_protein.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Microtus_ochrogaster/protein/protein.fa.gz"
-   exec "gzip -d $BLAST_DIR/prairiedeermouse_protein.fa.gz"
-}
-
-download_prairievole_rna {
-   doc "Download Prarie vole  (Microtus ochrogaster) protein" 
-   exec "wget -O $BLAST_DIR/prairiedeermouse_rna.fa.gz ftp://ftp.ncbi.nlm.nih.gov/genomes/Microtus_ochrogaster/RNA/rna.fa.gz"
-   exec "gzip -d $BLAST_DIR/prairiedeermouse_rna.fa.gz"
+prepere_extended_rna = {
+exec "cat $BLAST_DIR/ncbi_ref_rna.fna $BLAST_DIR/chinesehamster_rna.fa $BLAST_DIR/goldenhamster_rna.fa $BLAST_DIR/prairiedeermouse_rna.fa $BLAST_DIR/prairievole_rna.fa  > $BLAST_DIR/ncbi_extended_rna.fna
+exec "makeblastdb -in $BLAST_DIR/ncbi_extended_rna.fna -dbtype nucl"
 }
 
 
