@@ -34,13 +34,14 @@ download_swissTrEMBL_db = {
 }
 
 download_nt = {
-   for(i in {1..19} ) {
+   for (i in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'] ) {
+      exec "echo $i"
       exec "wget --directory-prefix=blast ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.${i}.tar.gz"
    }
 }
 
 download_nr = {
-   for(i in {1..24} ) {
+   for (i in ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'] ) {
       exec "wget --directory-prefix=blast ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr.${i}.tar.gz"
    }
 }
@@ -103,12 +104,12 @@ download_frog = {
 }
 
 prepere_ncbiref_protein = {
-exec "cat $BLAST_DIR/cow_protein.faa $BLAST_DIR/zebrafish_protein.faa $BLAST_DIR/human_protein.faa $BLAST_DIR/mouse_protein.faa $BLAST_DIR/rat_protein.faa $BLAST_DIR/pig_protein.faa $BLAST_DIR/frog_protein.faa > $BLAST_DIR/ncbi_ref_protein.faa"
+exec "cat $BLAST_DIR/cow_protein.fa $BLAST_DIR/zebrafish_protein.fa $BLAST_DIR/human_protein.fa $BLAST_DIR/mouse_protein.fa $BLAST_DIR/rat_protein.fa $BLAST_DIR/pig_protein.fa $BLAST_DIR/frog_protein.fa > $BLAST_DIR/ncbi_ref_protein.faa"
 exec "makeblastdb -in $BLAST_DIR/ncbi_ref_protein.faa -dbtype prot"
 }
 
 prepere_ncbiref_rna = {
-exec "cat $BLAST_DIR/cow_rna.fna $BLAST_DIR/zebrafish_rna.fna $BLAST_DIR/human_rna.fna $BLAST_DIR/mouse_rna.fna $BLAST_DIR/rat_rna.fna $BLAST_DIR/pig_rna.fna $BLAST_DIR/frog_rna.fna > $BLAST_DIR/ncbi_ref_rna.fna"
+exec "cat $BLAST_DIR/cow_rna.fa $BLAST_DIR/zebrafish_rna.fa $BLAST_DIR/human_rna.fa $BLAST_DIR/mouse_rna.fa $BLAST_DIR/rat_rna.fa $BLAST_DIR/pig_rna.fa $BLAST_DIR/frog_rna.fa > $BLAST_DIR/ncbi_ref_rna.fna"
 exec "makeblastdb -in $BLAST_DIR/ncbi_ref_rna.fna -dbtype nucl"
 }
 
@@ -146,7 +147,7 @@ download_prairievole = {
 }
 
 prepere_extended_protein = {
-exec "cat $BLAST_DIR/ncbi_ref_protein.fna $BLAST_DIR/chinesehamster_protein.fa $BLAST_DIR/goldenhamster_protein.fa $BLAST_DIR/prairiedeermouse_protein.fa $BLAST_DIR/prairievole_protein.fa  > $BLAST_DIR/ncbi_extended_protein.fna"
+exec "cat $BLAST_DIR/ncbi_ref_protein.faa $BLAST_DIR/chinesehamster_protein.fa $BLAST_DIR/goldenhamster_protein.fa $BLAST_DIR/prairiedeermouse_protein.fa $BLAST_DIR/prairievole_protein.fa  > $BLAST_DIR/ncbi_extended_protein.faa"
 exec "makeblastdb -in $BLAST_DIR/ncbi_extended_protein.faa -dbtype prot"
 }
 
