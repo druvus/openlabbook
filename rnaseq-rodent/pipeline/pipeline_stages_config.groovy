@@ -179,10 +179,3 @@ download_bankvole_heart = {
    "wget -P $SRA_DIR ftp://ftp.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP002/SRP002377/SRR042425/SRR042425.sra"
 }
 
-sra2fastq = {
-    produce(input.prefix+"_1.fastq",input.prefix+"_2.fastq") {
-        exec """
-            fastq-dump --split-3 $input.sra
-        """
-    }
-}
