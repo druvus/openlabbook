@@ -5,29 +5,50 @@
 // 
 ////////////////////////////////////////////////////////
 
-prepere_sortmerna_5s = {
-   doc "Creating binary database 5s"  
-   exec "$SORTMERNADIR/buildtrie --db $db5s"
+prepere_sortmerna_rfam_5s = {
+   doc "Creating binary database rfam-5s"  
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/rfam-5s-database-id98.fasta,$SORTMERNA/index/rfam-5s"
 }
 
-prepere_sortmerna_58s = {
-   doc "Creating binary database 58s"  
-   exec "$SORTMERNADIR/buildtrie --db $db58s"
+prepere_sortmerna_rfam_58s = {
+   doc "Creating binary database rfam-58s"  
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/rfam-5.8s-database-id98.fasta,$SORTMERNA/index/rfam-5.8s"
 }
 
-prepere_sortmerna_16s = {
-   doc "Creating binary database 16s"  
-   exec "$SORTMERNADIR/buildtrie --db $db16s"
+prepere_sortmerna_bac_16s = {
+   doc "Creating binary database bac-16s"  
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-bac-16s-database-id85.fasta,$SORTMERNA/index/silva-bac-16s"
 }
 
-prepere_sortmerna_18s = {
-   doc "Creating binary database 18s"  
-   exec "$SORTMERNADIR/buildtrie --db $db18s"
+prepere_sortmerna_bac_23s = {
+   doc "Creating binary database bac-23s"
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-bac-23s-database-id98.fasta,$SORTMERNA/index/silva-bac-23s"
 }
 
-prepere_sortmerna_23s = {
-   doc "Creating binary database 23s"  
-   exec "$SORTMERNADIR/buildtrie --db $db23s"
+
+prepere_sortmerna_euk_18s = {
+   doc "Creating binary database euk-18s"  
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-euk-18s-database-id95.fasta,$SORTMERNA/index/silva-euk-18s"
+}
+
+prepere_sortmerna_euk_28s = {
+   doc "Creating binary database euk-28s"  
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-euk-28s-database-id98.fasta,$SORTMERNA/index/silva-euk-28s"
+}
+
+prepere_sortmerna_arc_16s = {
+   doc "Creating binary database euk-16s"
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-arc-16s-database-id95.fasta,$SORTMERNA/index/silva-arc-16s"
+}
+
+prepere_sortmerna_arc_23s = {
+   doc "Creating binary database arc-23s"
+   exec "$SORTMERNA/indexdb_rna --ref $SORTMERNA/rRNA_databases/silva-arc-23s-database-id98.fasta,$SORTMERNA/index/silva-arc-23s"
+}
+
+
+prepere_sortmerna_db = segment {
+ [ prepere_sortmerna_rfam_5s + prepere_sortmerna_rfam_58s + prepere_sortmerna_bac_16s + prepere_sortmerna_bac_23s +  prepere_sortmerna_bac_16s + prepere_sortmerna_arc_23s + prepere_sortmerna_euk_18s + prepere_sortmerna_euk_28s ]
 }
 
 
@@ -39,14 +60,13 @@ sra2fastq = {
     }
 }
 
-prepere_sortmerna_db = segment {
- [ prepere_sortmerna_5s + prepere_sortmerna_58s + prepere_sortmerna_16s + prepere_sortmerna_18s + prepere_sortmerna_23s ]
-}
-
 merge_readpair = {
    doc "Merge read-pairs"  
+    def output =  file(input.fq).name.replaceAll('_([1-2]).fq$','' + '.merge_readpair.fastq')
+    
+  
    exec """
-   $SORTMERNADIR/scripts/merge-paired-reads.sh $input1.fq $input2.fq $output.fastq
+   $SORTMERNA/scripts/merge-paired-reads.sh $input1.fq $input2.fq $output
    """
 }
 
@@ -55,7 +75,7 @@ remove_rrna = {
    doc "Remove rRNA from reads"
      produce(input.prefix+"_accepted.fastq", input.prefix+"_rejected.fastq", input.prefix+"_sortmerna.log"){ 
 	   exec """
-		   $SORTMERNADIR/sortmerna 
+		   $SORTMERNA/sortmerna 
 		   -n $dbNum 
 		   --db $dbs 
 		   --I $input.fq 
@@ -74,7 +94,7 @@ unmerge_readpair = {
    doc "Unmerge read-pairs"  
    produce(input.prefix+"_norRNA_1.fastq", input.prefix+"_norRNA_2.fastq"){ 
       exec """
-         $SORTMERNADIR/scripts/unmerge-paired-reads.sh $input $output1 $output2
+         $SORTMERNA/scripts/unmerge-paired-reads.sh $input $output1 $output2
       """
    }
 }
