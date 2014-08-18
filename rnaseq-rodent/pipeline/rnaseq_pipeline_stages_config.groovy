@@ -62,12 +62,13 @@ sra2fastq = {
 
 merge_readpair = {
    doc "Merge read-pairs"  
-    def output =  file(input.fq).name.replaceAll('_([1-2]).fq$','' + '.merge_readpair.fastq')
+   // def output =  file(input.fq).name.replaceAll('_([1-2]).fq$','' + '.merge_readpair.fastq') 
     
-  
+  // produce($output){  
    exec """
    $SORTMERNA/scripts/merge-paired-reads.sh $input1.fq $input2.fq $output
    """
+//}
 }
 
 
@@ -77,15 +78,14 @@ remove_rrna = {
 	   exec """
 		   $SORTMERNA/sortmerna 
 		   --ref $dbs 
-		   --reads $input.fastq 
+		   --reads $input 
 		   --other $output2 
 		   --log $output3 
-		   -a $threads
+		   -a=$threads
 		   -v 
-		   --paired-in 
-		   --paired-out
+		   --paired_in 
 		   --fastx
-		   --accept $output1
+		   --aligned $output1
 	   """
      }
 }

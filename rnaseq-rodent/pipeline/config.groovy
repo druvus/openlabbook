@@ -16,15 +16,15 @@ CORSET="/usr/local/corset/corset-0.9"
 
 //Set location of sortmerna and databases
 SORTMERNA="/home/andreas/src/sortmerna"
-db5s_rfam=$SORTMERNA/rRNA_databases/rfam-5s-database-id98.fasta,$SORTMERNA/index/rfam-5s
-db58s_rfam=$SORTMERNA/rRNA_databases/rfam-5.8s-database-id98.fasta,$SORTMERNA/index/rfam-5.8s
-db16s_bac=$SORTMERNA/rRNA_databases/silva-bac-16s-database-id85.fasta,$SORTMERNA/index/silva-bac-16s
-db23s_bac=$SORTMERNA/rRNA_databases/silva-bac-23s-database-id98.fasta,$SORTMERNA/index/silva-bac-23s
-db18s_euk=$SORTMERNA/rRNA_databases/silva-euk-18s-database-id95.fasta,$SORTMERNA/index/silva-euk-18s
-db28s_euk=$SORTMERNA/rRNA_databases/silva-euk-28s-database-id98.fasta,$SORTMERNA/index/silva-euk-28s
-db16s_arc=$SORTMERNA/rRNA_databases/silva-arc-16s-database-id95.fasta,$SORTMERNA/index/silva-arc-16s
-db23s_arc=$SORTMERNA/rRNA_databases/silva-bac-23s-database-id98.fasta,$SORTMERNA/index/silva-bac-23s
-dbs=$db5s_rfam:$db58s_rfam:$db16s_bac:$db23s_bac:$db18s_euk:$db28s_euk:$db16s_arc:$db23s_arc
+db5s_rfam="$SORTMERNA/rRNA_databases/rfam-5s-database-id98.fasta,$SORTMERNA/index/rfam-5s"
+db58s_rfam="$SORTMERNA/rRNA_databases/rfam-5.8s-database-id98.fasta,$SORTMERNA/index/rfam-5.8s"
+db16s_bac="$SORTMERNA/rRNA_databases/silva-bac-16s-database-id85.fasta,$SORTMERNA/index/silva-bac-16s"
+db23s_bac="$SORTMERNA/rRNA_databases/silva-bac-23s-database-id98.fasta,$SORTMERNA/index/silva-bac-23s"
+db18s_euk="$SORTMERNA/rRNA_databases/silva-euk-18s-database-id95.fasta,$SORTMERNA/index/silva-euk-18s"
+db28s_euk="$SORTMERNA/rRNA_databases/silva-euk-28s-database-id98.fasta,$SORTMERNA/index/silva-euk-28s"
+db16s_arc="$SORTMERNA/rRNA_databases/silva-arc-16s-database-id95.fasta,$SORTMERNA/index/silva-arc-16s"
+db23s_arc="$SORTMERNA/rRNA_databases/silva-arc-23s-database-id98.fasta,$SORTMERNA/index/silva-arc-23s"
+dbs="$db5s_rfam:$db58s_rfam:$db16s_bac:$db23s_bac:$db18s_euk:$db28s_euk:$db16s_arc:$db23s_arc"
 
 //Set location of trimmomatic
 TRIMMOMATIC="/home/andreas/src/Trimmomatic-0.32"

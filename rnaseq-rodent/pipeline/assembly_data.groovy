@@ -12,5 +12,5 @@ load "$CONFIG_DIR/rnaseq_pipeline_stages_config.groovy"
 
 run {   
    // prepere_sortmerna_db // + 
-"%_*.fq" * [ merge_readpair + remove_rrna + unmerge_readpair ]
+"%_*.fq" * [ merge_readpair  + remove_rrna + unmerge_readpair ]
 }
