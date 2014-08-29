@@ -11,5 +11,5 @@ load "$CONFIG_DIR/rnaseq_pipeline_stages_config.groovy"
 //bpipe run assembly_data.groovy sample*.fq
 
 run {   
-  "%_*.fq" * [ merge_readpair  + remove_rrna + unmerge_readpair ]
+  "%_*.fq" * [ merge_readpair  + remove_rrna + unmerge_readpair + trimmomatic ]  + pool 
 }

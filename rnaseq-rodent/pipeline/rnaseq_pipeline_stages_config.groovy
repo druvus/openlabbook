@@ -167,7 +167,10 @@ unmerge_readpair = {
 
 trimmomatic = {
     doc "Trim reads using Trimmomatic"  
-    filter("p1","u1","p2","u2") {
+    def output_name = "$input".split("/")[-1] // remove path to file
+    output_name = output_name.prefix.prefix.split("_")[0] // only use common name for output
+    
+    produce("${output_name}.p1.fastq","${output_name}.u1.fastq","${output_name}.p2.fastq","${output_name}.u2.fastq") {
         exec """
             java -jar $TRIMMOMATIC/trimmomatic-0.32.jar PE 
             -threads $threads 
@@ -176,6 +179,31 @@ trimmomatic = {
             ILLUMINACLIP:$ROOT_DIR/adapter.fa:1:30:9 SLIDINGWINDOW:7:20 MINLEN:50
             
         """
+    }
+}
+
+normalize_reads = {
+   doc "Normalize read-pairs"
+//   produce(input.prefix+"_1.fastq", input.prefix+"_2.fastq"){
+      exec """
+         $TRINITY/util/insilico_read_normalization.pl --seqType fq --JM 20G --max_cov 50 --left $input1 --right $input2 --pairs_together --PARALLEL_STATS --CPU 5
+      """
+   }
+//}
+
+pool = {
+    produce("all_1.fastq","all_2.fastq") {
+        from("*.p1.fastq") {
+            exec """
+                cat $inputs.fastq > $output1
+            """
+        }
+
+        from("*.p2.fastq") {
+            exec """
+                cat $inputs.fastq > $output2
+            """
+        }
     }
 }
 
