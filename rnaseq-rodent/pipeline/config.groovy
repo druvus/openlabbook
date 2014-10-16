@@ -44,3 +44,9 @@ dbs="$db5s_rfam $db58s_rfam $db16s_bac $db23s_bac $db18s_euk $db28s_euk $db16s_a
 //Set location of trimmomatic
 TRIMMOMATIC="/home/andreas/src/Trimmomatic-0.32"
 
+//Set location of Trinotate software
+TRINOTATE="/home/andreas/src/Trinotate_r20140708"
+TMHMM="/home/andreas/src/tmhmm/tmhmm-2.0c/bin"
+RNAMMER="/home/andreas/src/rnammer"
+SIGNALP="/home/andreas/src/signalp/signalp-4.1"
+
