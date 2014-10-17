@@ -184,12 +184,12 @@ trimmomatic = {
 
 normalize_reads = {
    doc "Normalize read-pairs"
-//   produce(input.prefix+"_1.fastq", input.prefix+"_2.fastq"){
+   produce(input.prefix+"_norm_1.fastq", input.prefix+"_norm_2.fastq"){
       exec """
          $TRINITY/util/insilico_read_normalization.pl --seqType fq --JM 20G --max_cov 50 --left $input1 --right $input2 --pairs_together --PARALLEL_STATS --CPU 5
       """
    }
-//}
+}
 
 pool = {
     produce("all_1.fastq","all_2.fastq") {
@@ -207,3 +207,163 @@ pool = {
     }
 }
 
+count_reads = {
+   doc "Count number of reads in fastq file"
+   exec "grep '@HWI-' $input | wc -l > $output"
+}
+
+
+trinity_assembly = {
+   doc "Count number of reads in fastq file"
+   output.dir="k1_trinity"
+   from ("_1.fastq*", "_2.fastq*") produce ("Trinity.fasta") {
+      exec "$TRINITY/Trinity --seqType fq --JM 40G --left $input1 --right $input2 --CPU $threads --min_kmer_cov 1 --output $output.dir"
+   }
+}
+
+
+trinity_stats = {
+   doc "Generate statistics of the assembly"
+      exec "$TRINITY/util/TrinityStats.pl $input"
+}
+
+align_estimate_abundance = {
+   doc "Prepere reference and align reads"
+   produce ("RSEM.genes.results", "RSEM.isoforms.results"){
+      exec "$TRINITY/util/align_and_estimate_abundance.pl --transcripts $input1 --seqType fq --left $input2 --right $input3 --est_method RSEM --aln_method bowtie --trinity_mode --prep_reference"
+   }
+}
+
+count_features = {
+   doc "Countnumber of genes"
+   produce ("cumul_counts.txt"){
+      exec "$TRINITY/util/misc/count_features_given_MIN_FPKM_threshold.pl $input  > $output"
+   }
+}
+
+filter_fasta_rsem = {
+   doc "Filter away genes without read support"
+   produce ("Trinity_filtered.fasta") {
+   from ("RSEM.isoforms.results", "Trinity.fasta"){
+      exec "$TRINITY/util/filter_fasta_by_rsem_values.pl  --rsem_output=$input1 --fasta=$input2 --output=$output --fpkm_cutoff=2 "
+   }
+   }
+}
+
+transdecoder_pfam = {
+   doc "Extract Likely Coding Sequences from Trinity Transcripts (Pfam-version)"
+   from ("Trinity_filtered.fasta") {
+      produce ("Trinity_filtered.fasta.transdecoder.pep"){
+      exec "$TRINITY/trinity-plugins/transdecoder/TransDecoder -t $input -m 50 --CPU $threads --search_pfam $BLAST_DIR/Pfam-AB.hmm.bin --workdir transdecoder --reuse"
+   }
+   }
+}
+
+transdecoder = {
+   doc "Extract Likely Coding Sequences from Trinity Transcripts"
+   from ("Trinity_filtered.fasta") {
+      produce ("Trinity_filtered.fasta.transdecoder.pep"){
+      exec "$TRINITY/trinity-plugins/transdecoder/TransDecoder -t $input -m 50 --CPU $threads --workdir transdecoder --reuse"
+   }
+   }
+}
+
+blastx_uniprot_sprot = {
+   doc "Blast genes against sprot"
+   from ("Trinity_filtered.fasta") {
+      exec "blastx -query $input -db $BLAST_DIR/uniprot_sprot.fasta -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastx_nr = {
+   doc "Blast genes against nr"
+   from ("Trinity_filtered.fasta") {
+      exec "blastx -query $input -db $BLAST_DIR/nr -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastx_ncbi_extended_protein = {
+   doc "Blast genes against extended set of NCBI reference genomes"
+   from ("Trinity_filtered.fasta") {
+      exec "blastx -query $input -db $BLAST_DIR/ncbi_extended_protein.faa -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+
+blastx_ncbi_ref_protein = {
+   doc "Blast genes against NCBI reference genomes"
+   from ("Trinity_filtered.fasta") {
+      exec "blastx -query $input -db $BLAST_DIR/ncbi_ref_protein.faa -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastx_uniref90 = {
+   doc "Blast genes against uniref90"
+   from ("Trinity_filtered.fasta") {
+      exec "blastx -query $input -db $BLAST_DIR/uniref90.fasta -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastn_nt = {
+   doc "Blast genes against nt"
+   from ("Trinity_filtered.fasta") {
+      exec "blastn -query $input -db $BLAST_DIR/nt -out $output -evalue 1e-20 -dust no -task megablast -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastn_ncbi_extended_rna = {
+   doc "Blast genes against extended set of NCBI reference genomes"
+   from ("Trinity_filtered.fasta") {
+      exec "blastn -query $input -db $BLAST_DIR/ncbi_extended_rna.fna -out $output -evalue 1e-20 -dust no -task megablast -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastn_ncbi_ref_rna = {
+   doc "Blast genes against nt"
+   from ("Trinity_filtered.fasta") {
+      exec "blastn -query $input -db $BLAST_DIR/ncbi_ref_rna.fna -out $output -evalue 1e-20 -dust no -task megablast -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastp_uniref90 = {
+   doc "Blast genes against uniref90"
+   from ("transdecoder.pep") {
+      exec "blastp -query $input -db $BLAST_DIR/uniref90.fasta -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+blastp_uniprot_sprot = {
+   doc "Blast genes against sprot"
+   from ("transdecoder.pep") {
+      exec "blastp -query $input -db $BLAST_DIR/uniprot_sprot.fasta -out $output -evalue 1e-20 -num_threads $threads -max_target_seqs 1 -outfmt 6"
+   }
+}
+
+
+hmmer = {
+   doc "Running HMMER to identify protein domains"
+   from ("transdecoder.pep") {
+      exec "hmmscan --cpu $threads --domtblout $output $BLAST_DIR/Pfam-A.hmm $input > pfam.log"
+   }
+}
+
+signalp = {
+   doc "Running signalP to predict signal peptides"
+   from ("transdecoder.pep") {
+      exec "$SIGNALP/signalp -f short -n $output $input"
+   }
+}
+
+tmhmm = {
+   doc "Running tmHMM to predict transmembrane regions"
+   from ("transdecoder.pep") {
+      exec "$TMHMM/tmhmm --short < $input > $output"
+   }
+}
+
+rnammer = {
+   doc "Running RNAMMER to identify rRNA transcripts"
+   from ("Trinity_filtered.fasta") {
+      exec "$TRINOTATE/util/rnammer_support/RnammerTranscriptome.pl --transcriptome $input --path_to_rnammer $RNAMMER/rnammer"
+   }
+}
